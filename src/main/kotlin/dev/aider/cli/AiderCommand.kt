@@ -7,6 +7,7 @@ data class AiderCommand(
     val files: List<String>,
     val apiKey: String?,
     val anthropicApiKey: String?,
+    val openRouterApiKey: String?,
     val verbose: Boolean
 ) {
     fun getOpenAIApiKey(): String {
@@ -19,7 +20,17 @@ data class AiderCommand(
             ?: throw IllegalArgumentException("Anthropic API key not provided. Use --anthropic-api-key or set ANTHROPIC_API_KEY environment variable")
     }
     
+    fun getOpenRouterApiKey(): String {
+        return openRouterApiKey ?: System.getenv("OPENROUTER_API_KEY") 
+            ?: throw IllegalArgumentException("OpenRouter API key not provided. Use --openrouter-api-key or set OPENROUTER_API_KEY environment variable")
+    }
+    
     fun isAnthropicModel(): Boolean {
         return model.startsWith("claude-") || model.startsWith("sonnet-") || model.startsWith("opus-") || model.startsWith("haiku-")
+    }
+    
+    fun isOpenRouterModel(): Boolean {
+        return model.contains("/") || model.startsWith("openai/") || model.startsWith("anthropic/") || 
+               model.startsWith("meta-llama/") || model.startsWith("mistralai/") || model.startsWith("google/")
     }
 }

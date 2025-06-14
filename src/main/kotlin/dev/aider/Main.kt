@@ -48,6 +48,12 @@ fun main(args: Array<String>) {
         description = "Anthropic API key (or set ANTHROPIC_API_KEY environment variable)"
     )
     
+    val openRouterApiKey by parser.option(
+        ArgType.String,
+        fullName = "openrouter-api-key",
+        description = "OpenRouter API key (or set OPENROUTER_API_KEY environment variable)"
+    )
+    
     val verbose by parser.option(
         ArgType.Boolean,
         shortName = "v",
@@ -73,6 +79,7 @@ fun main(args: Array<String>) {
             files = allFiles,
             apiKey = apiKey,
             anthropicApiKey = anthropicApiKey,
+            openRouterApiKey = openRouterApiKey,
             verbose = verbose
         )
         

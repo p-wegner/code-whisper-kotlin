@@ -4,6 +4,7 @@ package dev.aider.core
 import dev.aider.cli.AiderCommand
 import dev.aider.openai.OpenAIClient
 import dev.aider.anthropic.AnthropicClient
+import dev.aider.openrouter.OpenRouterClient
 import dev.aider.file.FileManager
 import dev.aider.output.OutputFormatter
 
@@ -35,12 +36,19 @@ class AiderCore {
             
             // Call appropriate API based on model
             outputFormatter.printSection("Calling AI API...")
-            val response = if (command.isAnthropicModel()) {
-                val anthropicClient = AnthropicClient(command.getAnthropicApiKey(), command.verbose)
-                anthropicClient.createMessage(context, command.model)
-            } else {
-                val openAIClient = OpenAIClient(command.getOpenAIApiKey(), command.verbose)
-                openAIClient.chatCompletion(context, command.model)
+            val response = when {
+                command.isOpenRouterModel() -> {
+                    val openRouterClient = OpenRouterClient(command.getOpenRouterApiKey(), command.verbose)
+                    openRouterClient.chatCompletion(context, command.model)
+                }
+                command.isAnthropicModel() -> {
+                    val anthropicClient = AnthropicClient(command.getAnthropicApiKey(), command.verbose)
+                    anthropicClient.createMessage(context, command.model)
+                }
+                else -> {
+                    val openAIClient = OpenAIClient(command.getOpenAIApiKey(), command.verbose)
+                    openAIClient.chatCompletion(context, command.model)
+                }
             }
             
             outputFormatter.printSection("Response:")
