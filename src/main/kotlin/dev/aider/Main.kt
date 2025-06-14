@@ -54,6 +54,12 @@ fun main(args: Array<String>) {
         description = "OpenRouter API key (or set OPENROUTER_API_KEY environment variable)"
     )
     
+    val deepSeekApiKey by parser.option(
+        ArgType.String,
+        fullName = "deepseek-api-key",
+        description = "DeepSeek API key (or set DEEPSEEK_API_KEY environment variable)"
+    )
+    
     val verbose by parser.option(
         ArgType.Boolean,
         shortName = "v",
@@ -98,6 +104,7 @@ fun main(args: Array<String>) {
             apiKey = apiKey,
             anthropicApiKey = anthropicApiKey,
             openRouterApiKey = openRouterApiKey,
+            deepSeekApiKey = deepSeekApiKey,
             verbose = verbose,
             autoApply = autoApply,
             autoCommit = autoCommit,

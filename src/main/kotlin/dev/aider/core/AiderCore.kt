@@ -1,9 +1,11 @@
+
 package dev.aider.core
 
 import dev.aider.cli.AiderCommand
 import dev.aider.openai.OpenAIClient
 import dev.aider.anthropic.AnthropicClient
 import dev.aider.openrouter.OpenRouterClient
+import dev.aider.deepseek.DeepSeekClient
 import dev.aider.file.FileManager
 import dev.aider.output.OutputFormatter
 import dev.aider.edit.EditParser
@@ -54,6 +56,10 @@ class AiderCore {
                 autoApply = command.autoApply
             ) { enhancedContext ->
                 when {
+                    command.isDeepSeekModel() -> {
+                        val deepSeekClient = DeepSeekClient(command.getDeepSeekApiKey(), command.verbose)
+                        deepSeekClient.chatCompletion(enhancedContext, command.model)
+                    }
                     command.isOpenRouterModel() -> {
                         val openRouterClient = OpenRouterClient(command.getOpenRouterApiKey(), command.verbose)
                         openRouterClient.chatCompletion(enhancedContext, command.model)

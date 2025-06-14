@@ -8,6 +8,7 @@ data class AiderCommand(
     val apiKey: String?,
     val anthropicApiKey: String?,
     val openRouterApiKey: String?,
+    val deepSeekApiKey: String?,
     val verbose: Boolean,
     val autoApply: Boolean = false,
     val autoCommit: Boolean = false,
@@ -28,6 +29,11 @@ data class AiderCommand(
             ?: throw IllegalArgumentException("OpenRouter API key not provided. Use --openrouter-api-key or set OPENROUTER_API_KEY environment variable")
     }
     
+    fun getDeepSeekApiKey(): String {
+        return deepSeekApiKey ?: System.getenv("DEEPSEEK_API_KEY") 
+            ?: throw IllegalArgumentException("DeepSeek API key not provided. Use --deepseek-api-key or set DEEPSEEK_API_KEY environment variable")
+    }
+    
     fun isAnthropicModel(): Boolean {
         return model.startsWith("claude-") || model.startsWith("sonnet-") || model.startsWith("opus-") || model.startsWith("haiku-")
     }
@@ -35,5 +41,9 @@ data class AiderCommand(
     fun isOpenRouterModel(): Boolean {
         return model.contains("/") || model.startsWith("openai/") || model.startsWith("anthropic/") || 
                model.startsWith("meta-llama/") || model.startsWith("mistralai/") || model.startsWith("google/")
+    }
+    
+    fun isDeepSeekModel(): Boolean {
+        return model.startsWith("deepseek-") || model.startsWith("deepseek/")
     }
 }
