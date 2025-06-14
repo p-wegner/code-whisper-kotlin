@@ -3,6 +3,7 @@ package dev.aider.core
 
 import dev.aider.cli.AiderCommand
 import dev.aider.openai.OpenAIClient
+import dev.aider.anthropic.AnthropicClient
 import dev.aider.file.FileManager
 import dev.aider.output.OutputFormatter
 
@@ -28,15 +29,19 @@ class AiderCore {
                 emptyMap()
             }
             
-            // Initialize OpenAI client
-            val openAIClient = OpenAIClient(command.getApiKey(), command.verbose)
-            
-            // Build context and send to OpenAI
+            // Build context
             outputFormatter.printSection("Analyzing request...")
             val context = buildContext(command.message, fileContents)
             
-            outputFormatter.printSection("Calling OpenAI API...")
-            val response = openAIClient.chatCompletion(context, command.model)
+            // Call appropriate API based on model
+            outputFormatter.printSection("Calling AI API...")
+            val response = if (command.isAnthropicModel()) {
+                val anthropicClient = AnthropicClient(command.getAnthropicApiKey(), command.verbose)
+                anthropicClient.createMessage(context, command.model)
+            } else {
+                val openAIClient = OpenAIClient(command.getOpenAIApiKey(), command.verbose)
+                openAIClient.chatCompletion(context, command.model)
+            }
             
             outputFormatter.printSection("Response:")
             outputFormatter.printResponse(response)

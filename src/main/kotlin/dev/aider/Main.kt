@@ -42,6 +42,12 @@ fun main(args: Array<String>) {
         description = "OpenAI API key (or set OPENAI_API_KEY environment variable)"
     )
     
+    val anthropicApiKey by parser.option(
+        ArgType.String,
+        fullName = "anthropic-api-key",
+        description = "Anthropic API key (or set ANTHROPIC_API_KEY environment variable)"
+    )
+    
     val verbose by parser.option(
         ArgType.Boolean,
         shortName = "v",
@@ -66,6 +72,7 @@ fun main(args: Array<String>) {
             model = model ?: "gpt-4",
             files = allFiles,
             apiKey = apiKey,
+            anthropicApiKey = anthropicApiKey,
             verbose = verbose
         )
         
