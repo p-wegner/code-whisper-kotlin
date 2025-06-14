@@ -41,9 +41,8 @@ A Kotlin CLI application that helps developers by analyzing code and providing A
 - deepseek-reasoner
 
 #### Vertex AI (Google Cloud)
-- gemini-1.5-pro
-- gemini-1.5-flash
 - gemini-2.0-flash-exp
+- gemini-2.0-flash-thinking-exp
 
 ## 🚧 Not Yet Implemented Features
 

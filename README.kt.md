@@ -218,9 +218,8 @@ Files are prioritized based on:
 - And hundreds of other models via OpenRouter
 
 ### Vertex AI
-- `gemini-1.5-pro`
-- `gemini-1.5-flash` 
 - `gemini-2.0-flash-exp`
+- `gemini-2.0-flash-thinking-exp`
 
 ## Architecture
 
