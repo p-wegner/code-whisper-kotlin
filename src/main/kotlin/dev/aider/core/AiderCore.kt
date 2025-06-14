@@ -1,4 +1,3 @@
-
 package dev.aider.core
 
 import dev.aider.cli.AiderCommand
@@ -15,6 +14,7 @@ import dev.aider.git.GitManager
 import dev.aider.retry.RetryManager
 import dev.aider.repomap.RepoMapGenerator
 import dev.aider.history.ChatHistory
+import dev.aider.history.InputHistory
 
 class AiderCore {
     private val fileManager = FileManager()
@@ -25,9 +25,14 @@ class AiderCore {
         try {
             outputFormatter.printHeader()
             
-            // Initialize chat history
+            // Initialize chat history and input history
             val chatHistory = ChatHistory(verbose = command.verbose)
+            val inputHistory = InputHistory(verbose = command.verbose)
+            
             chatHistory.initializeHistory()
+            
+            // Add current input to history
+            inputHistory.addInput(command.message, command.model, command.files)
             
             if (command.verbose) {
                 println("Using model: ${command.model}")
@@ -35,6 +40,15 @@ class AiderCore {
                 println("Auto-apply: ${command.autoApply}")
                 println("Auto-commit: ${command.autoCommit}")
                 println("Max retries: ${command.maxRetries}")
+                
+                // Show recent input history
+                val recentInputs = inputHistory.getRecentInputs(3)
+                if (recentInputs.size > 1) { // More than just the current input
+                    println("\nRecent inputs:")
+                    recentInputs.dropLast(1).forEach { input ->
+                        println("  $input")
+                    }
+                }
                 println()
             }
             

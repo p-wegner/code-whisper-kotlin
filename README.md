@@ -1,4 +1,3 @@
-
 # Aider Kotlin - AI Coding Assistant
 
 A Kotlin CLI application that helps developers by analyzing code and providing AI-powered suggestions using multiple AI providers (OpenAI, Anthropic, OpenRouter, DeepSeek).
@@ -17,6 +16,7 @@ A Kotlin CLI application that helps developers by analyzing code and providing A
 - 🎛️ **Flexible model selection** - Support for various models across all providers
 - 🌳 **Repository mapping** - Automatic repository structure analysis (4k tokens)
 - 📚 **Chat history** - Persistent conversation history stored in `.aider/chat_history.md`
+- 📝 **Input history** - Track and reuse previous commands stored in `.aider/input_history.txt`
 
 ### Supported AI Providers & Models
 
@@ -128,6 +128,8 @@ Options:
       --auto-commit            Automatically commit changes after applying edits
       --max-retries INT        Maximum number of retries if LLM fails to follow format (default: 3)
       --clear-history          Clear the chat history and exit
+      --show-input-history     Show recent input history and exit
+      --clear-input-history    Clear the input history and exit
   -f, --file TEXT              Files to add to the chat session (can be used multiple times)
   -v, --verbose                Enable verbose output
   -h, --help                   Show this help message
@@ -144,11 +146,28 @@ Aider automatically maintains a conversation history in `.aider/chat_history.md`
 
 The last 3 sessions are automatically included in the context for new requests to maintain conversation continuity.
 
+### Input History
+
+Aider also tracks all your input commands in `.aider/input_history.txt` for easy reuse and reference:
+
+- Stores up to 100 recent commands
+- Includes timestamp, model, files, and message for each command
+- Searchable command history
+- Display recent commands in verbose mode
+
 ```bash
 # Clear chat history
 aider --clear-history
 
-# The history file is located at: .aider/chat_history.md
+# Clear input history
+aider --clear-input-history
+
+# Show recent input history
+aider --show-input-history
+
+# The history files are located at:
+# - .aider/chat_history.md
+# - .aider/input_history.txt
 ```
 
 ### Examples
@@ -157,7 +176,13 @@ aider --clear-history
 # Analyze a single file
 aider -m "Add input validation" src/main/kotlin/UserService.kt
 
-# Analyze multiple files with verbose output
+# View recent input history
+aider --show-input-history
+
+# Clear input history
+aider --clear-input-history
+
+# Analyze multiple files with verbose output (shows recent inputs)
 aider -v -m "Refactor these classes to use dependency injection" \
   src/main/kotlin/UserService.kt \
   src/main/kotlin/UserRepository.kt
@@ -174,8 +199,9 @@ aider --model deepseek-chat -m "Refactor this code" MyClass.kt
 # Retry mechanism with custom max retries
 aider --auto-apply --max-retries 5 -m "Fix this bug" MyClass.kt
 
-# Clear conversation history
+# Clear conversation and input history
 aider --clear-history
+aider --clear-input-history
 ```
 
 ## Architecture
@@ -189,7 +215,7 @@ aider --clear-history
 - **Git Integration** (`dev.aider.git`) - Git repository operations
 - **Retry System** (`dev.aider.retry`) - Handle LLM format failures with intelligent retries
 - **Repository Mapping** (`dev.aider.repomap`) - Analyze and map repository structure
-- **Chat History** (`dev.aider.history`) - Persistent conversation history management
+- **History Management** (`dev.aider.history`) - Chat history and input history tracking
 
 ## How Auto-Apply Works
 

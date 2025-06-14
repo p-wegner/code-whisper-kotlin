@@ -1,4 +1,3 @@
-
 package dev.aider
 
 import kotlinx.cli.*
@@ -6,6 +5,7 @@ import kotlinx.coroutines.runBlocking
 import dev.aider.cli.AiderCommand
 import dev.aider.core.AiderCore
 import dev.aider.history.ChatHistory
+import dev.aider.history.InputHistory
 import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
@@ -91,15 +91,48 @@ fun main(args: Array<String>) {
         fullName = "clear-history",
         description = "Clear the chat history and exit"
     ).default(false)
+    
+    val showInputHistory by parser.option(
+        ArgType.Boolean,
+        fullName = "show-input-history",
+        description = "Show recent input history and exit"
+    ).default(false)
+    
+    val clearInputHistory by parser.option(
+        ArgType.Boolean,
+        fullName = "clear-input-history",
+        description = "Clear the input history and exit"
+    ).default(false)
 
     try {
         parser.parse(args)
         
-        // Handle clear history command
+        // Handle clear history commands
         if (clearHistory) {
             val chatHistory = ChatHistory(verbose = verbose)
             chatHistory.clearHistory()
             println("Chat history cleared successfully")
+            exitProcess(0)
+        }
+        
+        if (clearInputHistory) {
+            val inputHistory = InputHistory(verbose = verbose)
+            inputHistory.clearHistory()
+            println("Input history cleared successfully")
+            exitProcess(0)
+        }
+        
+        if (showInputHistory) {
+            val inputHistory = InputHistory(verbose = verbose)
+            val history = inputHistory.getRecentInputs(20)
+            if (history.isNotEmpty()) {
+                println("Recent input history:")
+                history.forEachIndexed { index, input ->
+                    println("${index + 1}. $input")
+                }
+            } else {
+                println("No input history found")
+            }
             exitProcess(0)
         }
         
