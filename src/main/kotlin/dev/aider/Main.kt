@@ -60,6 +60,18 @@ fun main(args: Array<String>) {
         fullName = "verbose",
         description = "Enable verbose output"
     ).default(false)
+    
+    val autoApply by parser.option(
+        ArgType.Boolean,
+        fullName = "auto-apply",
+        description = "Automatically apply edits suggested by AI"
+    ).default(false)
+    
+    val autoCommit by parser.option(
+        ArgType.Boolean,
+        fullName = "auto-commit",
+        description = "Automatically commit changes after applying edits"
+    ).default(false)
 
     try {
         parser.parse(args)
@@ -80,7 +92,9 @@ fun main(args: Array<String>) {
             apiKey = apiKey,
             anthropicApiKey = anthropicApiKey,
             openRouterApiKey = openRouterApiKey,
-            verbose = verbose
+            verbose = verbose,
+            autoApply = autoApply,
+            autoCommit = autoCommit
         )
         
         runBlocking {
