@@ -15,6 +15,7 @@ import dev.aider.retry.RetryManager
 import dev.aider.repomap.RepoMapGenerator
 import dev.aider.history.ChatHistory
 import dev.aider.history.InputHistory
+import dev.aider.vertexai.VertexAIClient
 
 class AiderCore {
     private val fileManager = FileManager()
@@ -109,6 +110,15 @@ class AiderCore {
                 autoApply = command.autoApply
             ) { enhancedContext ->
                 when {
+                    command.isVertexAIModel() -> {
+                        val vertexAIClient = VertexAIClient(
+                            accessToken = command.getVertexAIAccessToken(),
+                            projectId = command.getVertexAIProjectId(),
+                            location = command.getVertexAILocation(),
+                            verbose = command.verbose
+                        )
+                        vertexAIClient.generateContent(enhancedContext, command.model)
+                    }
                     command.isDeepSeekModel() -> {
                         val deepSeekClient = DeepSeekClient(command.getDeepSeekApiKey(), command.verbose)
                         deepSeekClient.chatCompletion(enhancedContext, command.model)

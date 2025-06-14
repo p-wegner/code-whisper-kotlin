@@ -1,4 +1,3 @@
-
 package dev.aider.cli
 
 data class AiderCommand(
@@ -9,6 +8,9 @@ data class AiderCommand(
     val anthropicApiKey: String?,
     val openRouterApiKey: String?,
     val deepSeekApiKey: String?,
+    val vertexAIAccessToken: String?,
+    val vertexAIProjectId: String?,
+    val vertexAILocation: String?,
     val verbose: Boolean,
     val autoApply: Boolean = false,
     val autoCommit: Boolean = false,
@@ -34,6 +36,20 @@ data class AiderCommand(
             ?: throw IllegalArgumentException("DeepSeek API key not provided. Use --deepseek-api-key or set DEEPSEEK_API_KEY environment variable")
     }
     
+    fun getVertexAIAccessToken(): String {
+        return vertexAIAccessToken ?: System.getenv("VERTEX_AI_ACCESS_TOKEN") 
+            ?: throw IllegalArgumentException("Vertex AI access token not provided. Use --vertex-ai-access-token or set VERTEX_AI_ACCESS_TOKEN environment variable")
+    }
+    
+    fun getVertexAIProjectId(): String {
+        return vertexAIProjectId ?: System.getenv("VERTEX_AI_PROJECT_ID") 
+            ?: throw IllegalArgumentException("Vertex AI project ID not provided. Use --vertex-ai-project-id or set VERTEX_AI_PROJECT_ID environment variable")
+    }
+    
+    fun getVertexAILocation(): String {
+        return vertexAILocation ?: System.getenv("VERTEX_AI_LOCATION") ?: "us-central1"
+    }
+    
     fun isAnthropicModel(): Boolean {
         return model.startsWith("claude-") || model.startsWith("sonnet-") || model.startsWith("opus-") || model.startsWith("haiku-")
     }
@@ -45,5 +61,9 @@ data class AiderCommand(
     
     fun isDeepSeekModel(): Boolean {
         return model.startsWith("deepseek-") || model.startsWith("deepseek/")
+    }
+    
+    fun isVertexAIModel(): Boolean {
+        return model.startsWith("gemini-") || model.contains("gemini")
     }
 }

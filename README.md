@@ -1,12 +1,12 @@
 # Aider Kotlin - AI Coding Assistant
 
-A Kotlin CLI application that helps developers by analyzing code and providing AI-powered suggestions using multiple AI providers (OpenAI, Anthropic, OpenRouter, DeepSeek).
+A Kotlin CLI application that helps developers by analyzing code and providing AI-powered suggestions using multiple AI providers (OpenAI, Anthropic, OpenRouter, DeepSeek, Vertex AI).
 
 ## ✅ Implemented Features
 
 - 📝 **Message-based interaction** with `-m` parameter
 - 🔧 **File analysis** - Read and analyze multiple source files
-- 🤖 **Multiple AI providers** - OpenAI, Anthropic, OpenRouter, and DeepSeek support
+- 🤖 **Multiple AI providers** - OpenAI, Anthropic, OpenRouter, DeepSeek, and Vertex AI support
 - 🎯 **Auto-apply edits** - Automatically apply suggested code changes using SEARCH/REPLACE blocks
 - 📊 **Verbose output** - Detailed logging when needed
 - 🔄 **Auto-retry mechanism** - Automatically retries if LLM fails to follow output format (max 3 retries)
@@ -44,6 +44,12 @@ A Kotlin CLI application that helps developers by analyzing code and providing A
 - deepseek-chat
 - deepseek-coder
 - deepseek-reasoner
+
+#### Vertex AI (Google Cloud)
+- gemini-pro
+- gemini-pro-vision
+- gemini-1.5-pro
+- gemini-1.5-flash
 
 ## 🚧 Not Yet Implemented Features
 
@@ -110,6 +116,11 @@ export OPENROUTER_API_KEY="your-api-key-here"
 
 # DeepSeek
 export DEEPSEEK_API_KEY="your-api-key-here"
+
+# Vertex AI
+export VERTEX_AI_ACCESS_TOKEN="your-access-token-here"
+export VERTEX_AI_PROJECT_ID="your-project-id"
+export VERTEX_AI_LOCATION="us-central1"  # optional, defaults to us-central1
 ```
 
 ### Command line options
@@ -118,21 +129,24 @@ export DEEPSEEK_API_KEY="your-api-key-here"
 Usage: aider [OPTIONS] [FILES...]
 
 Options:
-  -m, --message TEXT           Describe the changes you want (required)
-      --model TEXT             Model to use (default: gpt-4)
-      --openai-api-key TEXT    OpenAI API key
-      --anthropic-api-key TEXT Anthropic API key
-      --openrouter-api-key TEXT OpenRouter API key
-      --deepseek-api-key TEXT  DeepSeek API key
-      --auto-apply             Automatically apply edits suggested by AI
-      --auto-commit            Automatically commit changes after applying edits
-      --max-retries INT        Maximum number of retries if LLM fails to follow format (default: 3)
-      --clear-history          Clear the chat history and exit
-      --show-input-history     Show recent input history and exit
-      --clear-input-history    Clear the input history and exit
-  -f, --file TEXT              Files to add to the chat session (can be used multiple times)
-  -v, --verbose                Enable verbose output
-  -h, --help                   Show this help message
+  -m, --message TEXT               Describe the changes you want (required)
+      --model TEXT                 Model to use (default: gpt-4)
+      --openai-api-key TEXT        OpenAI API key
+      --anthropic-api-key TEXT     Anthropic API key
+      --openrouter-api-key TEXT    OpenRouter API key
+      --deepseek-api-key TEXT      DeepSeek API key
+      --vertex-ai-access-token TEXT Vertex AI access token
+      --vertex-ai-project-id TEXT  Vertex AI project ID
+      --vertex-ai-location TEXT    Vertex AI location (default: us-central1)
+      --auto-apply                 Automatically apply edits suggested by AI
+      --auto-commit                Automatically commit changes after applying edits
+      --max-retries INT            Maximum number of retries if LLM fails to follow format (default: 3)
+      --clear-history              Clear the chat history and exit
+      --show-input-history         Show recent input history and exit
+      --clear-input-history        Clear the input history and exit
+  -f, --file TEXT                  Files to add to the chat session (can be used multiple times)
+  -v, --verbose                    Enable verbose output
+  -h, --help                       Show this help message
 ```
 
 ### Chat History
@@ -195,6 +209,7 @@ aider --model gpt-3.5-turbo -m "Add documentation" MyClass.kt
 aider --model claude-3-opus-20240229 -m "Optimize performance" MyClass.kt
 aider --model openai/gpt-4 -m "Add tests" MyClass.kt
 aider --model deepseek-chat -m "Refactor this code" MyClass.kt
+aider --model gemini-pro -m "Add error handling" MyClass.kt
 
 # Retry mechanism with custom max retries
 aider --auto-apply --max-retries 5 -m "Fix this bug" MyClass.kt
@@ -208,7 +223,7 @@ aider --clear-input-history
 
 - **CLI Layer** (`dev.aider.cli`) - Command line argument parsing
 - **Core Logic** (`dev.aider.core`) - Main application logic and orchestration
-- **AI Clients** (`dev.aider.openai`, `dev.aider.anthropic`, `dev.aider.openrouter`, `dev.aider.deepseek`) - API communication
+- **AI Clients** (`dev.aider.openai`, `dev.aider.anthropic`, `dev.aider.openrouter`, `dev.aider.deepseek`, `dev.aider.vertexai`) - API communication
 - **File Management** (`dev.aider.file`) - File reading and analysis  
 - **Output Formatting** (`dev.aider.output`) - User-friendly console output
 - **Edit System** (`dev.aider.edit`) - Parse and apply SEARCH/REPLACE blocks

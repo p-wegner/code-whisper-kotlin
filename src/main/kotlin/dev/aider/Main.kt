@@ -61,6 +61,24 @@ fun main(args: Array<String>) {
         description = "DeepSeek API key (or set DEEPSEEK_API_KEY environment variable)"
     )
     
+    val vertexAIAccessToken by parser.option(
+        ArgType.String,
+        fullName = "vertex-ai-access-token",
+        description = "Vertex AI access token (or set VERTEX_AI_ACCESS_TOKEN environment variable)"
+    )
+    
+    val vertexAIProjectId by parser.option(
+        ArgType.String,
+        fullName = "vertex-ai-project-id",
+        description = "Vertex AI project ID (or set VERTEX_AI_PROJECT_ID environment variable)"
+    )
+    
+    val vertexAILocation by parser.option(
+        ArgType.String,
+        fullName = "vertex-ai-location",
+        description = "Vertex AI location (default: us-central1, or set VERTEX_AI_LOCATION environment variable)"
+    )
+    
     val verbose by parser.option(
         ArgType.Boolean,
         shortName = "v",
@@ -153,6 +171,9 @@ fun main(args: Array<String>) {
             anthropicApiKey = anthropicApiKey,
             openRouterApiKey = openRouterApiKey,
             deepSeekApiKey = deepSeekApiKey,
+            vertexAIAccessToken = vertexAIAccessToken,
+            vertexAIProjectId = vertexAIProjectId,
+            vertexAILocation = vertexAILocation,
             verbose = verbose,
             autoApply = autoApply,
             autoCommit = autoCommit,
