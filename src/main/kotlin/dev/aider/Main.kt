@@ -72,6 +72,12 @@ fun main(args: Array<String>) {
         fullName = "auto-commit",
         description = "Automatically commit changes after applying edits"
     ).default(false)
+    
+    val maxRetries by parser.option(
+        ArgType.Int,
+        fullName = "max-retries",
+        description = "Maximum number of retries if LLM fails to follow format (default: 3)"
+    ).default(3)
 
     try {
         parser.parse(args)
@@ -94,7 +100,8 @@ fun main(args: Array<String>) {
             openRouterApiKey = openRouterApiKey,
             verbose = verbose,
             autoApply = autoApply,
-            autoCommit = autoCommit
+            autoCommit = autoCommit,
+            maxRetries = maxRetries
         )
         
         runBlocking {

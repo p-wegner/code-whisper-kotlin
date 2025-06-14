@@ -1,4 +1,3 @@
-
 package dev.aider.core
 
 import dev.aider.cli.AiderCommand
@@ -11,6 +10,7 @@ import dev.aider.edit.EditParser
 import dev.aider.edit.EditApplier
 import dev.aider.edit.EditStatus
 import dev.aider.git.GitManager
+import dev.aider.retry.RetryManager
 
 class AiderCore {
     private val fileManager = FileManager()
@@ -26,11 +26,13 @@ class AiderCore {
                 println("Files: ${command.files}")
                 println("Auto-apply: ${command.autoApply}")
                 println("Auto-commit: ${command.autoCommit}")
+                println("Max retries: ${command.maxRetries}")
                 println()
             }
             
-            // Initialize Git manager
+            // Initialize Git manager and retry manager
             val gitManager = GitManager(command.verbose)
+            val retryManager = RetryManager(command.maxRetries, command.verbose)
             
             // Read and analyze files
             val fileContents = if (command.files.isNotEmpty()) {
@@ -44,20 +46,26 @@ class AiderCore {
             outputFormatter.printSection("Analyzing request...")
             val context = buildContext(command.message, fileContents, command.autoApply)
             
-            // Call appropriate API based on model
+            // Call appropriate API with retry mechanism
             outputFormatter.printSection("Calling AI API...")
-            val response = when {
-                command.isOpenRouterModel() -> {
-                    val openRouterClient = OpenRouterClient(command.getOpenRouterApiKey(), command.verbose)
-                    openRouterClient.chatCompletion(context, command.model)
-                }
-                command.isAnthropicModel() -> {
-                    val anthropicClient = AnthropicClient(command.getAnthropicApiKey(), command.verbose)
-                    anthropicClient.createMessage(context, command.model)
-                }
-                else -> {
-                    val openAIClient = OpenAIClient(command.getOpenAIApiKey(), command.verbose)
-                    openAIClient.chatCompletion(context, command.model)
+            val response = retryManager.executeWithRetry(
+                context = context,
+                model = command.model,
+                autoApply = command.autoApply
+            ) { enhancedContext ->
+                when {
+                    command.isOpenRouterModel() -> {
+                        val openRouterClient = OpenRouterClient(command.getOpenRouterApiKey(), command.verbose)
+                        openRouterClient.chatCompletion(enhancedContext, command.model)
+                    }
+                    command.isAnthropicModel() -> {
+                        val anthropicClient = AnthropicClient(command.getAnthropicApiKey(), command.verbose)
+                        anthropicClient.createMessage(enhancedContext, command.model)
+                    }
+                    else -> {
+                        val openAIClient = OpenAIClient(command.getOpenAIApiKey(), command.verbose)
+                        openAIClient.chatCompletion(enhancedContext, command.model)
+                    }
                 }
             }
             

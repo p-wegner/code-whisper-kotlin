@@ -1,3 +1,4 @@
+
 package dev.aider.cli
 
 data class AiderCommand(
@@ -9,7 +10,8 @@ data class AiderCommand(
     val openRouterApiKey: String?,
     val verbose: Boolean,
     val autoApply: Boolean = false,
-    val autoCommit: Boolean = false
+    val autoCommit: Boolean = false,
+    val maxRetries: Int = 3
 ) {
     fun getOpenAIApiKey(): String {
         return apiKey ?: System.getenv("OPENAI_API_KEY") 
