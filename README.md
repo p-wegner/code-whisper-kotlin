@@ -1,73 +1,122 @@
-# Welcome to your Lovable project
 
-## Project info
+# Aider Kotlin - AI Coding Assistant
 
-**URL**: https://lovable.dev/projects/1f6369b8-dce7-4a92-8bc1-b58922f7018b
+A Kotlin CLI application that helps developers by analyzing code and providing AI-powered suggestions using multiple AI providers (OpenAI, Anthropic, OpenRouter).
 
-## How can I edit this code?
+## Features
 
-There are several ways of editing your application.
+- 📝 **Message-based interaction** with `-m` parameter
+- 🔧 **File analysis** - Read and analyze multiple source files
+- 🤖 **Multiple AI providers** - OpenAI, Anthropic, and OpenRouter support
+- 🎯 **Auto-apply edits** - Automatically apply suggested code changes
+- 📊 **Verbose output** - Detailed logging when needed
 
-**Use Lovable**
+## Installation
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/1f6369b8-dce7-4a92-8bc1-b58922f7018b) and start prompting.
+### Prerequisites
+- Java 17 or later
+- Kotlin 1.9.22 or later
 
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+### Build from source
+```bash
+git clone <repository-url>
+cd aider-kotlin
+./gradlew build
 ```
 
-**Edit a file directly in GitHub**
+## Usage
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Basic usage
+```bash
+# Analyze code and ask for suggestions
+./gradlew run --args="-m 'Add error handling to this function' src/main/kotlin/MyFile.kt"
 
-**Use GitHub Codespaces**
+# Using jar file
+java -jar build/libs/aider-kotlin-1.0.0.jar -m "Refactor this code" MyFile.kt
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Set up API Keys
+```bash
+# OpenAI
+export OPENAI_API_KEY="your-api-key-here"
 
-## What technologies are used for this project?
+# Anthropic
+export ANTHROPIC_API_KEY="your-api-key-here"
 
-This project is built with:
+# OpenRouter
+export OPENROUTER_API_KEY="your-api-key-here"
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Command line options
 
-## How can I deploy this project?
+```bash
+Usage: aider [OPTIONS] [FILES...]
 
-Simply open [Lovable](https://lovable.dev/projects/1f6369b8-dce7-4a92-8bc1-b58922f7018b) and click on Share -> Publish.
+Options:
+  -m, --message TEXT           Describe the changes you want (required)
+      --model TEXT             Model to use (default: gpt-4)
+      --openai-api-key TEXT    OpenAI API key
+      --anthropic-api-key TEXT Anthropic API key
+      --openrouter-api-key TEXT OpenRouter API key
+  -v, --verbose                Enable verbose output
+  -h, --help                   Show this help message
+```
 
-## Can I connect a custom domain to my Lovable project?
+### Examples
 
-Yes, you can!
+```bash
+# Analyze a single file
+aider -m "Add input validation" src/main/kotlin/UserService.kt
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+# Analyze multiple files with verbose output
+aider -v -m "Refactor these classes to use dependency injection" \
+  src/main/kotlin/UserService.kt \
+  src/main/kotlin/UserRepository.kt
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+# Use different AI providers
+aider --model gpt-3.5-turbo -m "Add documentation" MyClass.kt
+aider --model claude-3-opus-20240229 -m "Optimize performance" MyClass.kt
+aider --model openai/gpt-4 -m "Add tests" MyClass.kt
+```
+
+## Supported Models
+
+### OpenAI
+- gpt-4 (default)
+- gpt-3.5-turbo
+- gpt-4-turbo
+
+### Anthropic
+- claude-3-opus-20240229
+- claude-3-sonnet-20240229
+- claude-3-haiku-20240307
+
+### OpenRouter
+- openai/gpt-4
+- anthropic/claude-3-opus
+- meta-llama/llama-2-70b-chat
+- And many more...
+
+## Architecture
+
+- **CLI Layer** (`dev.aider.cli`) - Command line argument parsing
+- **Core Logic** (`dev.aider.core`) - Main application logic
+- **AI Clients** (`dev.aider.openai`, `dev.aider.anthropic`, `dev.aider.openrouter`) - API communication
+- **File Management** (`dev.aider.file`) - File reading and analysis  
+- **Output Formatting** (`dev.aider.output`) - User-friendly console output
+
+## Development
+
+### Running tests
+```bash
+./gradlew test
+```
+
+### Building executable jar
+```bash
+./gradlew jar
+```
+
+## License
+
+MIT License - see LICENSE file for details.
