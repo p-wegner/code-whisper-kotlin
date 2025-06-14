@@ -24,6 +24,13 @@ fun main(args: Array<String>) {
         description = "Model to use (default: gpt-4)"
     )
     
+    val addFiles by parser.option(
+        ArgType.String,
+        shortName = "f",
+        fullName = "file",
+        description = "Files to add to the chat session"
+    ).multiple()
+    
     val files by parser.argument(
         ArgType.String,
         description = "Files to include in the chat"
@@ -51,10 +58,13 @@ fun main(args: Array<String>) {
             exitProcess(1)
         }
         
+        // Combine files from -f parameter and positional arguments
+        val allFiles = (addFiles + files.toList()).distinct()
+        
         val command = AiderCommand(
             message = message!!,
             model = model ?: "gpt-4",
-            files = files.toList(),
+            files = allFiles,
             apiKey = apiKey,
             verbose = verbose
         )
