@@ -5,6 +5,7 @@ import kotlinx.cli.*
 import kotlinx.coroutines.runBlocking
 import dev.aider.cli.AiderCommand
 import dev.aider.core.AiderCore
+import dev.aider.history.ChatHistory
 import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
@@ -84,9 +85,23 @@ fun main(args: Array<String>) {
         fullName = "max-retries",
         description = "Maximum number of retries if LLM fails to follow format (default: 3)"
     ).default(3)
+    
+    val clearHistory by parser.option(
+        ArgType.Boolean,
+        fullName = "clear-history",
+        description = "Clear the chat history and exit"
+    ).default(false)
 
     try {
         parser.parse(args)
+        
+        // Handle clear history command
+        if (clearHistory) {
+            val chatHistory = ChatHistory(verbose = verbose)
+            chatHistory.clearHistory()
+            println("Chat history cleared successfully")
+            exitProcess(0)
+        }
         
         if (message == null) {
             println("Error: -m/--message is required")

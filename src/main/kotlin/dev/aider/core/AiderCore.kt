@@ -14,6 +14,7 @@ import dev.aider.edit.EditStatus
 import dev.aider.git.GitManager
 import dev.aider.retry.RetryManager
 import dev.aider.repomap.RepoMapGenerator
+import dev.aider.history.ChatHistory
 
 class AiderCore {
     private val fileManager = FileManager()
@@ -23,6 +24,10 @@ class AiderCore {
     suspend fun execute(command: AiderCommand) {
         try {
             outputFormatter.printHeader()
+            
+            // Initialize chat history
+            val chatHistory = ChatHistory(verbose = command.verbose)
+            chatHistory.initializeHistory()
             
             if (command.verbose) {
                 println("Using model: ${command.model}")
@@ -77,9 +82,10 @@ class AiderCore {
                 emptyMap()
             }
             
-            // Build context
+            // Build context with chat history
             outputFormatter.printSection("Analyzing request...")
-            val context = buildContext(command.message, fileContents, repoMap, command.autoApply)
+            val recentHistory = chatHistory.getRecentHistory(3)
+            val context = buildContext(command.message, fileContents, repoMap, recentHistory, command.autoApply)
             
             // Call appropriate API with retry mechanism
             outputFormatter.printSection("Calling AI API...")
@@ -112,6 +118,7 @@ class AiderCore {
             outputFormatter.printResponse(response)
             
             // Parse and apply edits if auto-apply is enabled
+            val appliedEdits = mutableListOf<String>()
             if (command.autoApply) {
                 outputFormatter.printSection("Parsing edits...")
                 val editBlocks = editParser.parseEdits(response)
@@ -126,6 +133,7 @@ class AiderCore {
                     
                     if (successfulEdits.isNotEmpty()) {
                         outputFormatter.printSuccess("Applied ${successfulEdits.size} edit(s) successfully")
+                        appliedEdits.addAll(successfulEdits.map { it.filePath })
                         
                         // Auto-commit if enabled and we're in a git repository
                         if (command.autoCommit && gitManager.isGitRepository()) {
@@ -156,6 +164,15 @@ class AiderCore {
                 }
             }
             
+            // Add this session to chat history
+            chatHistory.addEntry(
+                message = command.message,
+                model = command.model,
+                files = command.files,
+                response = response,
+                appliedEdits = appliedEdits
+            )
+            
         } catch (e: Exception) {
             outputFormatter.printError("Error: ${e.message}")
             if (command.verbose) {
@@ -165,8 +182,20 @@ class AiderCore {
         }
     }
     
-    private fun buildContext(message: String, fileContents: Map<String, String>, repoMap: String, autoApply: Boolean): String {
+    private fun buildContext(
+        message: String, 
+        fileContents: Map<String, String>, 
+        repoMap: String, 
+        recentHistory: String,
+        autoApply: Boolean
+    ): String {
         val context = StringBuilder()
+        
+        // Add recent chat history if available
+        if (recentHistory.isNotBlank()) {
+            context.append(recentHistory)
+            context.append("\n---\n\n")
+        }
         
         // Add repository map if available
         if (repoMap.isNotBlank()) {

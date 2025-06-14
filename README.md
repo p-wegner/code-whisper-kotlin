@@ -15,6 +15,8 @@ A Kotlin CLI application that helps developers by analyzing code and providing A
 - 🔍 **Edit parsing** - Parse SEARCH/REPLACE blocks from AI responses
 - 🛠️ **Git integration** - Detect Git repositories and commit changes
 - 🎛️ **Flexible model selection** - Support for various models across all providers
+- 🌳 **Repository mapping** - Automatic repository structure analysis (4k tokens)
+- 📚 **Chat history** - Persistent conversation history stored in `.aider/chat_history.md`
 
 ### Supported AI Providers & Models
 
@@ -46,8 +48,6 @@ A Kotlin CLI application that helps developers by analyzing code and providing A
 ## 🚧 Not Yet Implemented Features
 
 - 🔄 **Interactive chat mode** - Currently only supports single-shot requests
-- 📚 **Chat history** - No conversation memory between runs
-- 🌳 **Repo map generation** - Automatic repository structure analysis
 - 📖 **Context management** - Smart selection of relevant files based on request
 - 🔍 **Semantic search** - Find relevant code across the repository
 - 🧪 **Test generation** - Automatic test creation for modified code
@@ -75,6 +75,14 @@ cd aider-kotlin
 ./gradlew build
 ```
 
+### Build native executable (Windows)
+```bash
+# Build native executable
+./gradlew nativeCompile
+
+# The executable will be at: build/native/nativeCompile/aider-kotlin.exe
+```
+
 ## Usage
 
 ### Basic usage
@@ -84,6 +92,9 @@ cd aider-kotlin
 
 # Using jar file
 java -jar build/libs/aider-kotlin-1.0.0.jar -m "Refactor this code" MyFile.kt
+
+# Using native executable (Windows)
+./build/native/nativeCompile/aider-kotlin.exe -m "Add tests" MyFile.kt
 ```
 
 ### Set up API Keys
@@ -116,9 +127,28 @@ Options:
       --auto-apply             Automatically apply edits suggested by AI
       --auto-commit            Automatically commit changes after applying edits
       --max-retries INT        Maximum number of retries if LLM fails to follow format (default: 3)
+      --clear-history          Clear the chat history and exit
   -f, --file TEXT              Files to add to the chat session (can be used multiple times)
   -v, --verbose                Enable verbose output
   -h, --help                   Show this help message
+```
+
+### Chat History
+
+Aider automatically maintains a conversation history in `.aider/chat_history.md`. This file includes:
+
+- Timestamp of each interaction
+- User requests and AI responses
+- Applied edits and affected files
+- Model used for each request
+
+The last 3 sessions are automatically included in the context for new requests to maintain conversation continuity.
+
+```bash
+# Clear chat history
+aider --clear-history
+
+# The history file is located at: .aider/chat_history.md
 ```
 
 ### Examples
@@ -143,6 +173,9 @@ aider --model deepseek-chat -m "Refactor this code" MyClass.kt
 
 # Retry mechanism with custom max retries
 aider --auto-apply --max-retries 5 -m "Fix this bug" MyClass.kt
+
+# Clear conversation history
+aider --clear-history
 ```
 
 ## Architecture
@@ -155,6 +188,8 @@ aider --auto-apply --max-retries 5 -m "Fix this bug" MyClass.kt
 - **Edit System** (`dev.aider.edit`) - Parse and apply SEARCH/REPLACE blocks
 - **Git Integration** (`dev.aider.git`) - Git repository operations
 - **Retry System** (`dev.aider.retry`) - Handle LLM format failures with intelligent retries
+- **Repository Mapping** (`dev.aider.repomap`) - Analyze and map repository structure
+- **Chat History** (`dev.aider.history`) - Persistent conversation history management
 
 ## How Auto-Apply Works
 
@@ -166,6 +201,7 @@ When `--auto-apply` is enabled, Aider:
 4. **Applies changes** - Searches for exact matches and replaces them
 5. **Retries on failure** - If format validation fails, enhances the prompt and retries (up to `--max-retries`)
 6. **Auto-commits** - If `--auto-commit` is enabled, commits successful changes to Git
+7. **Records history** - Saves the conversation and results to chat history
 
 ### SEARCH/REPLACE Block Format
 
@@ -190,15 +226,19 @@ new code here
 ./gradlew jar
 ```
 
+### Building native executable
+```bash
+./gradlew nativeCompile
+```
+
 ## Contributing
 
 We welcome contributions! Areas where help is especially needed:
 
 1. **Interactive chat mode** - Implement conversation history and context management
-2. **Repository mapping** - Automatic analysis of project structure
-3. **IDE integrations** - Plugins for popular IDEs
-4. **Performance optimizations** - Faster file processing and API calls
-5. **Additional AI providers** - Support for more LLM APIs
+2. **IDE integrations** - Plugins for popular IDEs
+3. **Performance optimizations** - Faster file processing and API calls
+4. **Additional AI providers** - Support for more LLM APIs
 
 ## License
 
