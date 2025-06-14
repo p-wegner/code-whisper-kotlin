@@ -1,3 +1,4 @@
+
 package dev.aider.cli
 
 data class AiderCommand(
@@ -51,7 +52,7 @@ data class AiderCommand(
     }
     
     fun isAnthropicModel(): Boolean {
-        return model.startsWith("claude-") || model.startsWith("sonnet-") || model.startsWith("opus-") || model.startsWith("haiku-")
+        return model.startsWith("claude-3-5-") || model.startsWith("claude-3.5-")
     }
     
     fun isOpenRouterModel(): Boolean {

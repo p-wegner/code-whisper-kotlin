@@ -21,23 +21,18 @@ A Kotlin CLI application that helps developers by analyzing code and providing A
 ### Supported AI Providers & Models
 
 #### OpenAI
-- gpt-4 (default)
-- gpt-3.5-turbo
-- gpt-4-turbo
-- gpt-4o
+- gpt-4o (default)
+- gpt-4o-mini
 
 #### Anthropic (Claude)
-- claude-3-opus-20240229
-- claude-3-sonnet-20240229
-- claude-3-haiku-20240307
 - claude-3-5-sonnet-20241022
+- claude-3-5-haiku-20241022
 
 #### OpenRouter
-- openai/gpt-4
-- anthropic/claude-3-opus
-- meta-llama/llama-2-70b-chat
-- mistralai/mixtral-8x7b-instruct
-- google/gemini-pro
+- openai/gpt-4o
+- anthropic/claude-3-5-sonnet
+- meta-llama/llama-3.2-90b-vision-instruct
+- google/gemini-pro-1.5
 - And many more...
 
 #### DeepSeek
@@ -46,10 +41,9 @@ A Kotlin CLI application that helps developers by analyzing code and providing A
 - deepseek-reasoner
 
 #### Vertex AI (Google Cloud)
-- gemini-pro
-- gemini-pro-vision
 - gemini-1.5-pro
 - gemini-1.5-flash
+- gemini-2.0-flash-exp
 
 ## 🚧 Not Yet Implemented Features
 
@@ -205,11 +199,11 @@ aider -v -m "Refactor these classes to use dependency injection" \
 aider --auto-apply --auto-commit -m "Add documentation" MyClass.kt
 
 # Use different AI providers
-aider --model gpt-3.5-turbo -m "Add documentation" MyClass.kt
-aider --model claude-3-opus-20240229 -m "Optimize performance" MyClass.kt
-aider --model openai/gpt-4 -m "Add tests" MyClass.kt
+aider --model gpt-4o -m "Add documentation" MyClass.kt
+aider --model claude-3-5-sonnet-20241022 -m "Optimize performance" MyClass.kt
+aider --model openai/gpt-4o -m "Add tests" MyClass.kt
 aider --model deepseek-chat -m "Refactor this code" MyClass.kt
-aider --model gemini-pro -m "Add error handling" MyClass.kt
+aider --model gemini-1.5-pro -m "Add error handling" MyClass.kt
 
 # Retry mechanism with custom max retries
 aider --auto-apply --max-retries 5 -m "Fix this bug" MyClass.kt

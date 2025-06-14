@@ -1,4 +1,3 @@
-
 # Aider Kotlin - AI Coding Assistant
 
 A Kotlin CLI application inspired by Aider that helps developers by analyzing code and providing AI-powered suggestions using multiple AI providers.
@@ -8,7 +7,7 @@ A Kotlin CLI application inspired by Aider that helps developers by analyzing co
 ### ✅ Implemented Features
 - 📝 **Message-based interaction** with `-m` parameter  
 - 🔧 **File analysis** - Read and analyze multiple source files
-- 🤖 **Multiple AI providers** - OpenAI, Anthropic, OpenRouter, DeepSeek
+- 🤖 **Multiple AI providers** - OpenAI, Anthropic, OpenRouter, DeepSeek, Vertex AI
 - 🎯 **Flexible model selection** - Support for various models from different providers
 - ⚡ **Auto-apply edits** - Automatically apply AI-suggested code changes with `--auto-apply`
 - 🔄 **Auto-retry mechanism** - Retry failed requests with intelligent error handling
@@ -18,10 +17,11 @@ A Kotlin CLI application inspired by Aider that helps developers by analyzing co
 - 📊 **Verbose output** - Detailed logging when needed
 - 🏗️ **Extensible architecture** - Easy to add new AI providers
 - 🗺️ **Repository mapping** - Automatic analysis of project structure and key files (4k tokens)
+- 📚 **Chat history** - Persistent conversation history
+- 📝 **Input history** - Track and reuse previous commands
 
 ### ❌ Unsupported Features (compared to original Aider)
 - 💬 **Interactive chat mode** - Currently only supports single message requests
-- 📚 **Chat history** - No persistent conversation history
 - 📁 **Advanced file tree analysis** - Basic repo mapping only
 - 🔧 **Configuration files** - No `.aider.conf.yml` support
 - 🎨 **Syntax highlighting** - Plain text output only
@@ -114,6 +114,9 @@ export OPENROUTER_API_KEY="your-openrouter-key-here"
 
 # DeepSeek
 export DEEPSEEK_API_KEY="your-deepseek-key-here"
+
+# Vertex AI
+export VERTEXAI_API_KEY="your-vertexai-key-here"
 ```
 
 #### Command Line Arguments
@@ -121,6 +124,7 @@ export DEEPSEEK_API_KEY="your-deepseek-key-here"
 aider --openai-api-key your-key -m "Your message" file.kt
 aider --anthropic-api-key your-key --model claude-3-sonnet-20240229 -m "Your message" file.kt
 aider --deepseek-api-key your-key --model deepseek-chat -m "Your message" file.kt
+aider --vertexai-api-key your-key --model gemini-1.5-pro -m "Your message" file.kt
 ```
 
 ### Command Line Options
@@ -136,6 +140,7 @@ Options:
   --anthropic-api-key TEXT    Anthropic API key  
   --openrouter-api-key TEXT   OpenRouter API key
   --deepseek-api-key TEXT     DeepSeek API key
+  --vertexai-api-key TEXT     Vertex AI API key
   --auto-apply                Automatically apply edits suggested by AI
   --auto-commit               Automatically commit changes after applying edits
   --max-retries INT           Maximum number of retries if LLM fails (default: 3)
@@ -195,25 +200,27 @@ Files are prioritized based on:
 ## Supported Models
 
 ### OpenAI
-- `gpt-4` (default)
-- `gpt-4-turbo`
-- `gpt-3.5-turbo`
-- And other OpenAI models
+- `gpt-4o` (default)
+- `gpt-4o-mini`
 
 ### Anthropic
-- `claude-3-opus-20240229`
-- `claude-3-sonnet-20240229` 
-- `claude-3-haiku-20240307`
 - `claude-3-5-sonnet-20241022`
+- `claude-3-5-haiku-20241022`
 
 ### DeepSeek
 - `deepseek-chat`
 - `deepseek-coder`
+- `deepseek-reasoner`
 
 ### OpenRouter
-- `openrouter/anthropic/claude-3.5-sonnet`
-- `openrouter/openai/gpt-4`
+- `openai/gpt-4o`
+- `anthropic/claude-3-5-sonnet`
 - And hundreds of other models via OpenRouter
+
+### Vertex AI
+- `gemini-1.5-pro`
+- `gemini-1.5-flash` 
+- `gemini-2.0-flash-exp`
 
 ## Architecture
 

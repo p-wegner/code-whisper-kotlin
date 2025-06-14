@@ -22,7 +22,7 @@ fun main(args: Array<String>) {
     val model by parser.option(
         ArgType.String,
         fullName = "model",
-        description = "Model to use (default: gpt-4)"
+        description = "Model to use (default: gpt-4o)"
     )
     
     val addFiles by parser.option(
@@ -165,7 +165,7 @@ fun main(args: Array<String>) {
         
         val command = AiderCommand(
             message = message!!,
-            model = model ?: "gpt-4",
+            model = model ?: "gpt-4o",
             files = allFiles,
             apiKey = apiKey,
             anthropicApiKey = anthropicApiKey,
