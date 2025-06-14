@@ -40,12 +40,31 @@ class OpenAIClient(
     
     suspend fun chatCompletion(content: String, model: String): String {
         try {
+            val systemPrompt = """
+            You are Aider, an AI programming assistant specialized in code analysis and modification. 
+            
+            Your capabilities include:
+            - Analyzing repository structure and understanding codebase architecture
+            - Providing precise code suggestions and improvements
+            - Understanding relationships between files and components
+            - Suggesting refactoring and optimization opportunities
+            - Following best practices and coding standards
+            
+            When provided with repository context, use it to:
+            - Understand the overall project structure and patterns
+            - Identify relevant files and dependencies
+            - Provide contextually appropriate suggestions
+            - Maintain consistency with existing code style and architecture
+            
+            Be thorough but concise. Focus on practical, actionable advice.
+            """.trimIndent()
+            
             val request = ChatCompletionRequest(
                 model = model,
                 messages = listOf(
                     ChatMessage(
                         role = "system",
-                        content = "You are Aider, an AI programming assistant. You help developers by analyzing code and providing suggestions, improvements, or solutions. Be concise but thorough."
+                        content = systemPrompt
                     ),
                     ChatMessage(
                         role = "user", 

@@ -17,18 +17,20 @@ A Kotlin CLI application inspired by Aider that helps developers by analyzing co
 - 🔍 **Search/Replace edit format** - Precise code modifications using SEARCH/REPLACE blocks
 - 📊 **Verbose output** - Detailed logging when needed
 - 🏗️ **Extensible architecture** - Easy to add new AI providers
+- 🗺️ **Repository mapping** - Automatic analysis of project structure and key files (4k tokens)
 
 ### ❌ Unsupported Features (compared to original Aider)
 - 💬 **Interactive chat mode** - Currently only supports single message requests
 - 📚 **Chat history** - No persistent conversation history
-- 🗺️ **Repository map generation** - No automatic codebase mapping
-- 📁 **File tree analysis** - No automatic file discovery
+- 📁 **Advanced file tree analysis** - Basic repo mapping only
 - 🔧 **Configuration files** - No `.aider.conf.yml` support
 - 🎨 **Syntax highlighting** - Plain text output only
 - 📝 **Diff preview** - No visual diff before applying changes
 - 🌐 **Web interface** - Command line only
 - 🔌 **Plugin system** - No extensibility through plugins
 - 📊 **Usage analytics** - No built-in metrics or reporting
+- 🧠 **Smart file selection** - No automatic relevant file detection
+- 🔄 **Watch mode** - No file monitoring capabilities
 
 ## Installation
 
@@ -144,10 +146,13 @@ Options:
 ### Examples
 
 ```bash
-# Analyze a single file
+# Analyze repository structure with specific files
 aider -m "Add input validation" src/main/kotlin/UserService.kt
 
-# Analyze multiple files with verbose output
+# Get architectural recommendations
+aider -m "How can I improve the structure of this codebase?"
+
+# Analyze multiple files with verbose output and repo context
 aider -v -m "Refactor these classes to use dependency injection" \
   src/main/kotlin/UserService.kt \
   src/main/kotlin/UserRepository.kt
@@ -155,14 +160,37 @@ aider -v -m "Refactor these classes to use dependency injection" \
 # Auto-apply changes and commit to git
 aider --auto-apply --auto-commit -m "Add error handling" ErrorHandler.kt
 
-# Use different AI providers
+# Use different AI providers with repository context
 aider --model claude-3-sonnet-20240229 -m "Add documentation" MyClass.kt
 aider --model deepseek-chat -m "Optimize this algorithm" Algorithm.kt
-aider --model openrouter/anthropic/claude-3.5-sonnet -m "Review code" Code.kt
+aider --model openrouter/anthropic/claude-3.5-sonnet -m "Review architecture" 
 
 # Use multiple files with -f parameter
 aider -f UserService.kt -f UserRepository.kt -m "Add caching layer"
 ```
+
+## Repository Mapping
+
+Aider automatically analyzes your repository structure and includes relevant context in AI requests:
+
+### What's Included
+- **File tree structure** - Hierarchical view of your project
+- **Key file contents** - Important files like `README.md`, `build.gradle.kts`, main classes
+- **File metadata** - Sizes, types, and importance scoring
+- **Architecture insights** - Understanding of project patterns and structure
+
+### Prioritization Logic
+Files are prioritized based on:
+1. **Configuration files** - `build.gradle.kts`, `pom.xml`, `package.json`
+2. **Entry points** - `main.kt`, `App.kt`, `Application.kt`
+3. **Documentation** - `README.md`, documentation files
+4. **Source code** - Kotlin, Java, and other source files
+5. **Location importance** - Files in `src/main` are prioritized over test files
+
+### Token Limits
+- **4,000 tokens** maximum for repository context
+- **Smart truncation** - Most important files are included first
+- **Size limits** - Large files are truncated to essential content
 
 ## Supported Models
 
@@ -195,6 +223,7 @@ aider -f UserService.kt -f UserRepository.kt -m "Add caching layer"
 - **File Management** (`dev.aider.file`) - File reading and analysis
 - **Edit System** (`dev.aider.edit`) - Parse and apply SEARCH/REPLACE edits
 - **Git Integration** (`dev.aider.git`) - Git operations and change management
+- **Repository Mapping** (`dev.aider.repomap`) - Codebase structure analysis
 - **Output Formatting** (`dev.aider.output`) - User-friendly console output
 - **Retry Logic** (`dev.aider.retry`) - Intelligent retry mechanism for failed requests
 
@@ -234,6 +263,11 @@ The architecture makes it easy to add support for new AI providers:
 - **Easier debugging** - Full JVM tooling support
 - **Dynamic loading** - Runtime flexibility
 
+### Repository Mapping Performance
+- **Efficient scanning** - Smart file filtering and prioritization
+- **Cached analysis** - Repository structure cached during execution
+- **Configurable limits** - Token and file size limits prevent performance issues
+
 ## Troubleshooting
 
 ### Native Executable Issues
@@ -246,6 +280,11 @@ The architecture makes it easy to add support for new AI providers:
 - Check network connectivity
 - Use `--verbose` flag to see detailed API communication
 - Try `--max-retries` with a higher value for unstable connections
+
+### Repository Mapping Issues
+- Large repositories may take longer to analyze
+- Binary files and build artifacts are automatically excluded
+- Use `--verbose` to see repository analysis progress
 
 ## License
 

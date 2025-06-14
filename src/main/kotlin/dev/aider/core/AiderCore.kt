@@ -1,3 +1,4 @@
+
 package dev.aider.core
 
 import dev.aider.cli.AiderCommand
@@ -12,6 +13,7 @@ import dev.aider.edit.EditApplier
 import dev.aider.edit.EditStatus
 import dev.aider.git.GitManager
 import dev.aider.retry.RetryManager
+import dev.aider.repomap.RepoMapGenerator
 
 class AiderCore {
     private val fileManager = FileManager()
@@ -55,6 +57,18 @@ class AiderCore {
                 }
             }
             
+            // Generate repository map
+            outputFormatter.printSection("Analyzing repository structure...")
+            val repoMapGenerator = RepoMapGenerator(command.verbose)
+            val repoMap = try {
+                repoMapGenerator.generateRepoMap(".", 4000) // 4k tokens as requested
+            } catch (e: Exception) {
+                if (command.verbose) {
+                    println("Warning: Failed to generate repository map: ${e.message}")
+                }
+                ""
+            }
+            
             // Read and analyze files
             val fileContents = if (command.files.isNotEmpty()) {
                 outputFormatter.printSection("Reading files...")
@@ -65,7 +79,7 @@ class AiderCore {
             
             // Build context
             outputFormatter.printSection("Analyzing request...")
-            val context = buildContext(command.message, fileContents, command.autoApply)
+            val context = buildContext(command.message, fileContents, repoMap, command.autoApply)
             
             // Call appropriate API with retry mechanism
             outputFormatter.printSection("Calling AI API...")
@@ -151,34 +165,47 @@ class AiderCore {
         }
     }
     
-    private fun buildContext(message: String, fileContents: Map<String, String>, autoApply: Boolean): String {
+    private fun buildContext(message: String, fileContents: Map<String, String>, repoMap: String, autoApply: Boolean): String {
         val context = StringBuilder()
         
+        // Add repository map if available
+        if (repoMap.isNotBlank()) {
+            context.append("# Repository Context\n\n")
+            context.append(repoMap)
+            context.append("\n---\n\n")
+        }
+        
         if (fileContents.isNotEmpty()) {
-            context.append("Here are the current files:\n\n")
+            context.append("# Current Files\n\n")
             
             fileContents.forEach { (filename, content) ->
-                context.append("=== $filename ===\n")
-                context.append("$content\n\n")
+                context.append("## $filename\n")
+                context.append("```\n")
+                context.append(content)
+                context.append("\n```\n\n")
             }
             
             context.append("---\n\n")
         }
         
-        context.append("User request: $message\n")
+        context.append("# User Request\n")
+        context.append("$message\n")
         
-        if (fileContents.isNotEmpty()) {
-            context.append("\nPlease analyze the files and provide suggestions or code changes based on the request.")
+        if (fileContents.isNotEmpty() || repoMap.isNotBlank()) {
+            context.append("\nPlease analyze the repository structure and files, then provide suggestions or code changes based on the request.")
         }
         
         if (autoApply) {
-            context.append("\n\nIMPORTANT: Please format your response using SEARCH/REPLACE blocks for any code changes. Use this exact format:\n\n")
+            context.append("\n\n# IMPORTANT: Response Format\n")
+            context.append("Please format your response using SEARCH/REPLACE blocks for any code changes. Use this exact format:\n\n")
+            context.append("```\n")
             context.append("filename.kt\n")
             context.append("<<<<<<< SEARCH\n")
             context.append("exact code to search for\n")
             context.append("=======\n")
             context.append("replacement code\n")
             context.append(">>>>>>> REPLACE\n")
+            context.append("```\n")
         }
         
         return context.toString()
