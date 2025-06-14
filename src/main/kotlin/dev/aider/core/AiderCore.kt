@@ -1,4 +1,3 @@
-
 package dev.aider.core
 
 import dev.aider.cli.AiderCommand
@@ -35,6 +34,26 @@ class AiderCore {
             // Initialize Git manager and retry manager
             val gitManager = GitManager(command.verbose)
             val retryManager = RetryManager(command.maxRetries, command.verbose)
+            
+            // Check for uncommitted changes and commit them if auto-apply is enabled
+            if (command.autoApply && gitManager.isGitRepository() && gitManager.hasUncommittedChanges()) {
+                outputFormatter.printSection("Detected uncommitted changes...")
+                val modifiedFiles = gitManager.getModifiedFiles()
+                
+                if (command.verbose) {
+                    println("Modified files detected:")
+                    modifiedFiles.forEach { println("  - $it") }
+                }
+                
+                outputFormatter.printSection("Committing existing changes to preserve work...")
+                val preCommitMessage = "aider: save uncommitted changes before applying new edits"
+                
+                if (gitManager.commitUncommittedChanges(preCommitMessage)) {
+                    outputFormatter.printSuccess("Existing changes committed successfully")
+                } else {
+                    outputFormatter.printWarning("Failed to commit existing changes - proceeding with caution")
+                }
+            }
             
             // Read and analyze files
             val fileContents = if (command.files.isNotEmpty()) {
