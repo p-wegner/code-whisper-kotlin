@@ -50,12 +50,7 @@ graalvmNative {
             
             buildArgs.add("--no-fallback")
             buildArgs.add("--enable-url-protocols=http,https")
-            buildArgs.add("--initialize-at-build-time=kotlinx.coroutines")
-            buildArgs.add("--initialize-at-build-time=io.ktor")
-            buildArgs.add("--initialize-at-build-time=kotlinx.serialization")
             buildArgs.add("-H:+ReportExceptionStackTraces")
-            buildArgs.add("-H:+AddAllCharsets")
-            buildArgs.add("-H:IncludeResources=.*")
         }
     }
 }
