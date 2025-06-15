@@ -112,27 +112,27 @@ class AiderCore {
                 when {
                     command.isVertexAIModel() -> {
                         val vertexAIClient = VertexAIClient(
-                            accessToken = command.getVertexAIAccessToken(),
-                            projectId = command.getVertexAIProjectId(),
-                            location = command.getVertexAILocation(),
+                            accessToken = command.resolveVertexAIAccessToken(),
+                            projectId = command.resolveVertexAIProjectId(),
+                            location = command.resolveVertexAILocation(),
                             verbose = command.verbose
                         )
                         vertexAIClient.generateContent(enhancedContext, command.model)
                     }
                     command.isDeepSeekModel() -> {
-                        val deepSeekClient = DeepSeekClient(command.getDeepSeekApiKey(), command.verbose)
+                        val deepSeekClient = DeepSeekClient(command.resolveDeepSeekApiKey(), command.verbose)
                         deepSeekClient.chatCompletion(enhancedContext, command.model)
                     }
                     command.isOpenRouterModel() -> {
-                        val openRouterClient = OpenRouterClient(command.getOpenRouterApiKey(), command.verbose)
+                        val openRouterClient = OpenRouterClient(command.resolveOpenRouterApiKey(), command.verbose)
                         openRouterClient.chatCompletion(enhancedContext, command.model)
                     }
                     command.isAnthropicModel() -> {
-                        val anthropicClient = AnthropicClient(command.getAnthropicApiKey(), command.verbose)
+                        val anthropicClient = AnthropicClient(command.resolveAnthropicApiKey(), command.verbose)
                         anthropicClient.createMessage(enhancedContext, command.model)
                     }
                     else -> {
-                        val openAIClient = OpenAIClient(command.getOpenAIApiKey(), command.verbose)
+                        val openAIClient = OpenAIClient(command.resolveOpenAIApiKey(), command.verbose)
                         openAIClient.chatCompletion(enhancedContext, command.model)
                     }
                 }
