@@ -46,11 +46,10 @@ graalvmNative {
             imageName.set("aider")
             mainClass.set("dev.aider.MainKt")
             debug.set(false)
-            verbose.set(true)
+            verbose.set(false)
             
             buildArgs.add("--no-fallback")
             buildArgs.add("--enable-url-protocols=http,https")
-            buildArgs.add("-H:+ReportExceptionStackTraces")
         }
     }
 }
