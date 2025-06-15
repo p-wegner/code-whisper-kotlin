@@ -156,7 +156,7 @@ fun main(args: Array<String>) {
         
         if (message == null) {
             println("Error: -m/--message is required")
-            println(parser.helpFormatter.renderHelp(parser.name, parser.description))
+            println("Usage: aider -m \"your message\" [options] [files...]")
             exitProcess(1)
         }
         
