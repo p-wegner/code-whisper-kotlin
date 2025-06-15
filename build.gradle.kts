@@ -22,8 +22,7 @@ dependencies {
     implementation("io.ktor:ktor-client-content-negotiation:2.3.7")
     implementation("io.ktor:ktor-client-logging:2.3.7")
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.7")
-    implementation("com.github.ajalt.colorama:colorama:0.2.0")
-    
+
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
 }
