@@ -21,7 +21,6 @@ data class DeepSeekMessage(
 @Serializable
 data class DeepSeekResponse(
     val id: String,
-    val object: String,
     val created: Long,
     val model: String,
     val choices: List<DeepSeekChoice>,

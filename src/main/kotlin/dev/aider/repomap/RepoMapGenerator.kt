@@ -123,7 +123,6 @@ class RepoMapGenerator(
                 }
             }
             
-            files.close()
         } catch (e: Exception) {
             if (verbose) {
                 println("Error reading directory $current: ${e.message}")
